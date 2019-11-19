@@ -1,0 +1,25 @@
+---
+title: "Data Betas Lab 13"
+author: "Brandon Nelsen. David Washburn, Burke Parent, Drew Hoffman, Tanner Ball"
+date: "2019/11/19"
+output: html_document
+---
+```{r}
+#Lab Tasks
+
+#Each lab member should come up with and address a subquestion, and then each team should consolidate the findings and choose a single overall question that is most interesting.
+
+#Each team member will be required to perform a permutation test so each team member should choose a subquestion that lends itself to being analyzed via a permutation test.
+
+#Each team member will also be required to use at least one map function in their analysis from section 21.5 in R for Data Science. This does not have to be the main finding, but can be part of the exploratory analysis.
+
+#Note that you may investigate other data sets if you feel that they pose more interesting questions. As long as you perform the above tasks in your analysis, any data sets from gapminder are okay to explore.
+```
+
+
+
+```{r, include = F, echo = F}
+library(tidyverse)
+library(gapminder)
+```
+
