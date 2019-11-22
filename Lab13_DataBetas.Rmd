@@ -23,3 +23,19 @@ library(tidyverse)
 library(gapminder)
 ```
 
+Drew 
+
+Do countries with higher life expectancy use more or less oil per capita than countries with a lower life expectancy?
+
+```{r}
+oilPerCap <- read.csv("oil_consumption_per_cap.csv")
+oilPerCap_noNA <- na.omit(oilPerCap)
+
+countryAverages <- map_dbl(oilPerCap_noNA, mean)
+
+lifeExp <- gapminder %>%
+  filter(year == 2007)
+#I picked 3 countries from each category, high life expectancy and low life expectancy and plotted them against each other
+#High life exp: Japan, Switzerland, Canada
+#Low life exp: Trinidad and Tobago, South Africa, 
+```
