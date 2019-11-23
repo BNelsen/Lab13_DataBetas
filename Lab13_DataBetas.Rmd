@@ -56,6 +56,12 @@ hydro
 
 David
 
+How has employment rate changed from 1991 to 2015 for Asian countries? Answering this question can give us insight as to how employment has changed between generations. For this study, I will be analyzing the employment rate of Japan.
+
+Null Hypothesis: Japan's employment rate has not significantly changed compared to other Asian countries.
+
+Japan's change in employment rate from 1991 to 2015 is -4.6%, which is indicated by the red line in the histogram below. This value falls between the 5th and 95th percentile. Therefore we fail to reject the null hypothesis and conclude that Japan's change in employment rate is not significant when compared to other countrys' changes in employment rates.
+
 ```{r}
 
 #read the data set and rename the years
@@ -66,9 +72,7 @@ colnames(employment.rate) <- c('Country', 1991:2022)
 employment.rate.9115 <- select(employment.rate, 'Country', 2, 26)
 employment.rate.9115 <- gather(employment.rate.9115, `1991`, `2015`, key = 'year', value = 'eRate')
 
-#filter by continents
-employment.rate.9115.NA <- filter(employment.rate.9115, 
-          Country == 'Canada' | Country == 'United States' | Country == 'Mexico')
+#filter by Asian Countries
 
 employment.rate.9115.Asia <- filter(employment.rate.9115,
           Country == 'Afghanistan' | Country == 'Armenia' | Country == 'Azerbaijan' | Country == 'Bahrain' | 
@@ -85,27 +89,15 @@ employment.rate.9115.Asia <- filter(employment.rate.9115,
           Country == 'Turkmenistan' | Country == 'United Arab Emirates' | Country == 'Uzbekistan' | 
           Country == 'Vietnam' | Country == 'Yemen')
 
-#Step 1: how has 'x' country improved its employment rate as opposed to 'y' country? is it a significant improvemnent? we want to answer this question to see how developing countries are improving as opposed to developed countries
-
-#Step 2: null hypothesis: x's difference in employment rate is the same as other countrys'
-
-#Step 3: Test Statistic: the  change in employment rate for x from 1991 to 2005.  let x = israel for testing purposes
-# Chnage in employment rate for x = 60.8% - 51.2% = 9.6%. If the null hypothesis is true then we should get a number close to this when we do the permutation test
-
-#Step 4: permutation test to see if country 'x' has improved significantly.
-#To do the test i want to get a random emplyment rate from 2015 and one from 1991 then subtract, then do that 999 more times
-
 #first make a function that grabs a random 2015 value
   #get a data set consisting of employment rates from 2015
 employment.rate.15.Asia <- filter(employment.rate.9115.Asia, year == 2015) %>% select(eRate)
-value.2015 <- sample_n(employment.rate.15.Asia, 1)
+
 
 #second make a function that grabs a randome 1991 value 
 employment.rate.91.Asia <- filter(employment.rate.9115.Asia, year == 1991) %>% select(eRate)
-value.1991 <- sample_n(employment.rate.91.Asia, 1)
 
-#grab those values and subtract them
-rate.difference <- value.2015-value.1991
+#grab those values and subtract them in a loop
 
 #now make a for loop with these functions
 
@@ -114,13 +106,21 @@ for(i in seq_along(vector.9115)){
   vector.9115[i] <- sample_n(employment.rate.15.Asia, 1)-sample_n(employment.rate.91.Asia, 1)
 }
 
+#make its a data frame
 new.df<- unlist(vector.9115)
 
-quantile(new.df,c(.05, .95))
+#get percentiles
+quantile(new.df,c(.05, .95)) # -28.2 and 29.62 for 5th and 95th percentiles
+
+#get japan data
+  #2015: 58%, #1991:62.6%, difference = -4.6%
+
+#histogram with relevent data
 
 ggplot() + geom_histogram(aes(new.df), bins = 50)  +
   geom_vline(xintercept = -28.2) +
   geom_vline(xintercept = 29.62) +
+  geom_vline(xintercept = -4.6, color = "red") +
   xlab("2015 Employment Rate - 1991 Employment Rate") +
   ggtitle("Distribution of Asian Countries' Employment Rate Difference from 1991 to 2015")
 
