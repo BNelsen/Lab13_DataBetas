@@ -39,3 +39,21 @@ lifeExp <- gapminder %>%
 #High life exp: Japan, Switzerland, Canada
 #Low life exp: Trinidad and Tobago, South Africa, 
 ```
+
+Burke
+
+Which countries have had the most dramatic change in generation of hydro power from 1960 to 2010 (In a 50 year period)? Did any countries actually decrease hydro power from 1960 to 2010?
+
+```{r}
+hydro <- read.csv("hydro_power_generation_total.csv")
+hydro <- na.omit(hydro) #I only want to use countries with complete data sets for each year.#
+hydro <- hydro %>% select(country, X1960, X2010) %>% mutate(Diff = X2010 - X1960)
+hydro
+
+
+
+```
+
+
+
+
