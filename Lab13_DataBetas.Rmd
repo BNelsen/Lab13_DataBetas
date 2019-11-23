@@ -54,6 +54,78 @@ hydro
 
 ```
 
+David
+
+```{r}
+
+#read the data set and rename the years
+employment.rate <- read.csv("aged_15plus_employment_rate_percent.csv")
+colnames(employment.rate) <- c('Country', 1991:2022)
+
+#tidy the data and select the years 1991 and 2015
+employment.rate.9115 <- select(employment.rate, 'Country', 2, 26)
+employment.rate.9115 <- gather(employment.rate.9115, `1991`, `2015`, key = 'year', value = 'eRate')
+
+#filter by continents
+employment.rate.9115.NA <- filter(employment.rate.9115, 
+          Country == 'Canada' | Country == 'United States' | Country == 'Mexico')
+
+employment.rate.9115.Asia <- filter(employment.rate.9115,
+          Country == 'Afghanistan' | Country == 'Armenia' | Country == 'Azerbaijan' | Country == 'Bahrain' | 
+          Country == 'Bangladesh' | Country == 'Bhutan' | Country == 'Brunei' | Country == 'Cambodia' | 
+          Country == 'China' | Country == 'Cyprus' | Country == 'Georgia' | Country == 'India' | 
+          Country == 'Indonesia' | Country == 'Iran' | Country == 'Iraq' | Country == 'Israel' | Country == 'Japan' |
+          Country == 'Jordan' | Country == 'Kazakhstan' | Country == 'Kuwait' | Country == 'Kyrgyzstan' | 
+          Country == 'Laos' | Country == 'Lebanon' | Country == 'Malaysia' | Country == 'Maldives' | 
+          Country == 'Mongolia' | Country == 'Myanmar' | Country == 'Nepal' | Country == 'North Korea' | 
+          Country == 'Oman' | Country == 'Pakistan' | Country == 'Palestine' | Country == 'Philippines' |
+          Country == 'Qatar' | Country == 'Russia' | Country == 'Saudi Arabia' | Country == 'Singapore' | 
+          Country == 'South Korea' | Country == 'Sri Lanka' | Country == 'Syria' | Country == 'Taiwan' | 
+          Country == 'Tajikistan' | Country == 'Thailand' | Country == 'Timor-Leste' | Country == 'Turkey' | 
+          Country == 'Turkmenistan' | Country == 'United Arab Emirates' | Country == 'Uzbekistan' | 
+          Country == 'Vietnam' | Country == 'Yemen')
+
+#Step 1: how has 'x' country improved its employment rate as opposed to 'y' country? is it a significant improvemnent? we want to answer this question to see how developing countries are improving as opposed to developed countries
+
+#Step 2: null hypothesis: x's difference in employment rate is the same as other countrys'
+
+#Step 3: Test Statistic: the  change in employment rate for x from 1991 to 2005.  let x = israel for testing purposes
+# Chnage in employment rate for x = 60.8% - 51.2% = 9.6%. If the null hypothesis is true then we should get a number close to this when we do the permutation test
+
+#Step 4: permutation test to see if country 'x' has improved significantly.
+#To do the test i want to get a random emplyment rate from 2015 and one from 1991 then subtract, then do that 999 more times
+
+#first make a function that grabs a random 2015 value
+  #get a data set consisting of employment rates from 2015
+employment.rate.15.Asia <- filter(employment.rate.9115.Asia, year == 2015) %>% select(eRate)
+value.2015 <- sample_n(employment.rate.15.Asia, 1)
+
+#second make a function that grabs a randome 1991 value 
+employment.rate.91.Asia <- filter(employment.rate.9115.Asia, year == 1991) %>% select(eRate)
+value.1991 <- sample_n(employment.rate.91.Asia, 1)
+
+#grab those values and subtract them
+rate.difference <- value.2015-value.1991
+
+#now make a for loop with these functions
+
+vector.9115 <- vector("double", length = 1000)
+for(i in seq_along(vector.9115)){
+  vector.9115[i] <- sample_n(employment.rate.15.Asia, 1)-sample_n(employment.rate.91.Asia, 1)
+}
+
+new.df<- unlist(vector.9115)
+
+quantile(new.df,c(.05, .95))
+
+ggplot() + geom_histogram(aes(new.df), bins = 50)  +
+  geom_vline(xintercept = -28.2) +
+  geom_vline(xintercept = 29.62) +
+  xlab("2015 Employment Rate - 1991 Employment Rate") +
+  ggtitle("Distribution of Asian Countries' Employment Rate Difference from 1991 to 2015")
+
+```
+
 
 
 
