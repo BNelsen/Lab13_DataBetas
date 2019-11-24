@@ -240,4 +240,51 @@ ggplot()+
   xlab("2008 Production - 1971 Production")
 ```
 
+Tanner
+
+How have CO2 emissions changed from 1952 to 2014 for the European Union and the United States? This question is important because we would like to see how the Western World has responded to the growing concern of climate change. Were they still increasing emissions in the near past, or have they been able to lower their emissions in response?
+
+Null Hypothesis: There has not been a significant change in CO2 emissions for the United States from 1952 to 2014. 
+
+Null Rejection: The difference in emissions for the US from 1952 to 2014 falls well outside our 5% to 95% range on the positive extrema, indicating that the US has had quite a significant increase in CO2 emissions since 1952.
+
+
+
+```{r}
+# read in and clean up the dataset
+co2 <- read_csv("yearly_co2_emissions_1000_tonnes.csv")
+co2post1952 <- co2 %>% select(country, `1952`:`2014`)
+co2noNA <- na.omit(co2post1952)
+
+# filter out non-EU and US countries
+CO2_EU_USA <- co2noNA %>% filter(country == "Austria" | country == "Belgium" | country == "Bulgaria" | country == "Croatia" | country == "Cyprus" | country == "Czech Republic" | country == "Denmark" | country == "Estonia" | country == "Finland" | country == "France" | country == "Germany" | country == "Greece" | country == "Hungary" | country == "Iceland" | country == "Italy" | country == "Latvia" | country == "Lithuania" | country == "Luxembourg" | country == "Malta" | country == "Netherlands" | country == "Poland" | country == "Portugal" | country == "Romania" | country == "Slovakia" | country == "Slovenia" | country == "Spain" | country == "Sweden" | country == "United Kingdom" | country == "United States")
+
+# get our emissions for 1952 and 2014
+CO2eu_usa2014 <- CO2_EU_USA %>% select(`2014`)
+CO2eu_usa1952 <- CO2_EU_USA %>% select(`1952`)
+
+# calculate real values for US for null hypothesis testing
+usa1952 <- CO2eu_usa1952$`1952`[24]
+usa2014 <- CO2eu_usa2014$`2014`[24]
+usadiff <- usa2014 - usa1952 # 160675.25
+
+# permutation test
+vector.eu_usa <- vector("double", length = 1000)
+for(i in seq_along(vector.eu_usa)){
+  vector.eu_usa[i] <- (sample_n(CO2eu_usa2014, 1) - sample_n(CO2eu_usa1952, 1))
+}
+
+# Unlist the perm test vector and get our 5% and 95% values
+UnlistedEU_USA <- unlist(vector.eu_usa)
+quantile(UnlistedEU_USA, c(0.05,0.95)) # 5%: -599357, 95%: 693490 (these values will be used to define our 5% to 95% range)
+
+ggplot()+
+  geom_histogram(aes(UnlistedEU_USA), binwidth = 1000000)+
+  geom_vline(xintercept = -599357) +
+  geom_vline(xintercept = 693490) +
+  geom_vline(xintercept = usadiff, color = "red") +
+  ggtitle("Distribution of CO2 Emissions for the EU countries and the United States")+
+  xlab("2014 Emissions - 1952 Emissions")
+```
+
 
