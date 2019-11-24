@@ -120,16 +120,38 @@ ggplot() + geom_histogram(aes(countryAverages)) +
 
 Burke
 
-Which countries have had the most dramatic change in generation of hydro power from 1960 to 2010 (In a 50 year period)? Did any countries actually decrease hydro power from 1960 to 2010?
+How have northern european countries changed regarding generation of hydro power from 1960 to 2010 (In a 50 year period), and how does this change compare to changes in hydro power generation for countries of the United Kingdom and Ireland?
+
+Null Hypothesis: There is no relevant change in generation of hydro power from 1960 to 2010 for each region of countries.
+
+There seems to be a major change for the countries of UK and Ireland, where they are actually now producing less, and the exact opposite has happened for Nordic countries.
 
 ```{r}
 hydro <- read.csv("hydro_power_generation_total.csv")
-hydro <- na.omit(hydro) #I only want to use countries with complete data sets for each year.#
-hydro <- hydro %>% select(country, X1960, X2010) %>% mutate(Diff = X2010 - X1960)
-hydro
+hydro <- na.omit(hydro)
 
+#^I only want to use countries with complete data sets for each year.#
 
+fifty <- hydro %>% select(country, X1960, X2010) %>% mutate(Diff = X2010 - X1960)
+row_keep = c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE,TRUE, FALSE)
+fifty = fifty[row_keep,]
+colnames(fifty) <- c('Country', 1960, 2010, 'Diff')
 
+#^Created a dataframe with relevant information from Denmark, Finland, Norway, Sweden, Ireland, and the United Kingdom.#
+
+fifty
+mean_nordic <- (-340 + 657000 + 7410000 + 3040000)/4
+mean_UK_Ire <- (39000 + -28600)/2
+
+#^Found mean of each region's hydro energy production.#
+
+vec_fifty <- c("double", length = 1000)
+for(i in seq_along(vec_fifty)){
+  vec_fifty[i] <- (sample_n(fifty, 1) - sample_n(fifty, 1))
+  sample
+}
+
+#Permutation Test for means to reject or prove null hypothesis.
 ```
 
 David
@@ -172,7 +194,7 @@ employment.rate.9115.Asia <- filter(employment.rate.9115,
 employment.rate.15.Asia <- filter(employment.rate.9115.Asia, year == 2015) %>% select(eRate)
 
 
-#second make a function that grabs a randome 1991 value 
+#second make a function that grabs a random 1991 value 
 employment.rate.91.Asia <- filter(employment.rate.9115.Asia, year == 1991) %>% select(eRate)
 
 #grab those values and subtract them in a loop
