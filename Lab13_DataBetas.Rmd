@@ -27,17 +27,94 @@ Drew
 
 Do countries with higher life expectancy use more or less oil per capita than countries with a lower life expectancy?
 
+Null hypothesis: There is no difference between oil consumption per capita based on life expectancy.
+
+Alternative: There is a difference in oil consumption per capita based on a country's life expectancy.
+
+My test statistic is the difference in sample means of consumption per capita between two countries, one with higher life expectancy and one with lower. My higher life expectancy countries are Japan (82.603), Switzerland (81.701), and Canada (80.653). My lower expectancy countries are Trinidad and Tobago (69.819), South Africa (49.339), and Pakistan (65.483).
+
+In two of the histogram results (Switzerland vs. South Africa and Canada vs. Pakistan) the real difference in sample means is in the 99th percentile of results. Therefore, I can reject the null hypothesis and can conclude that in countries with a higher life expectancy, they consume more oil per capita than in countries with lower life expectancy.
+
 ```{r}
 oilPerCap <- read.csv("oil_consumption_per_cap.csv")
 oilPerCap_noNA <- na.omit(oilPerCap)
 
+#map function to calculate average yearly oil consumption by country
 countryAverages <- map_dbl(oilPerCap_noNA, mean)
 
 lifeExp <- gapminder %>%
   filter(year == 2007)
-#I picked 3 countries from each category, high life expectancy and low life expectancy and plotted them against each other
+#I picked 3 countries from each category, high life expectancy and low life expectancy in 2007 and plotted them against each other
 #High life exp: Japan, Switzerland, Canada
-#Low life exp: Trinidad and Tobago, South Africa, 
+#Low life exp: Trinidad and Tobago, South Africa, Pakistan
+
+#Japan vs Trinidad and Tobago
+opc_1 <- oilPerCap_noNA[c(27,50),]
+#Switzerland vs South Africa
+opc_2 <- oilPerCap_noNA[c(48,44),]
+#Canada vs Pakistan
+opc_3 <- oilPerCap_noNA[c(8,34),]
+
+#Unlists data values for perm tests
+all1 <- unlist(opc_1)
+all1 <- all1[3:106]
+all2 <- unlist(opc_2)
+all2 <- all2[3:106]
+all3 <- unlist(opc_3)
+all3 <- all3[3:106]
+
+#running permutation test
+rand1 <- perm_mean(1000, all1, 52)
+rand2 <- perm_mean(1000, all2, 52)
+rand3 <- perm_mean(1000, all3, 52)
+
+#Getting real mean values for each country
+jap <- oilPerCap_noNA[27,]
+jap <- unlist(jap)
+jap <- jap[2:53]
+jap <- mean(jap)
+swi <- oilPerCap_noNA[48,]
+swi <- unlist(swi)
+swi <- swi[2:53]
+swi <- mean(swi)
+can <- oilPerCap_noNA[8,]
+can <- unlist(can)
+can <- can[2:53]
+can <- mean(can)
+tri <- oilPerCap_noNA[50,]
+tri <- unlist(tri)
+tri <- tri[2:53]
+tri <- mean(tri)
+sou <- oilPerCap_noNA[44,]
+sou <- unlist(sou)
+sou <- sou[2:53]
+sou <- mean(sou)
+pak <- oilPerCap_noNA[34,]
+pak <- unlist(pak)
+pak <- pak[2:53]
+pak <- mean(pak)
+
+#calculating difference in means
+diff1 <- jap - tri
+diff2 <- swi - sou
+diff3 <- can - pak
+
+#plot of perm test vs difference in sample means
+ggplot() + geom_histogram(aes(rand1)) +
+  geom_vline(xintercept = diff1) +
+  ggtitle("Japan vs. Trinidad and Tobago: Oil Consumption Per Capita") +
+  xlab("Difference in Means")
+ggplot() + geom_histogram(aes(rand2)) +
+  geom_vline(xintercept = diff2) +
+  ggtitle("Switzerland vs. South Africa: Oil Consumption Per Capita")  +
+  xlab("Difference in Means")
+ggplot() + geom_histogram(aes(rand3)) +
+  geom_vline(xintercept = diff3) +
+  ggtitle("Canada vs. Pakistan: Oil Consumption Per Capita")  +
+  xlab("Difference in Means")
+ggplot() + geom_histogram(aes(countryAverages)) +
+  ggtitle("Distribution of Countries' Average Per Capita Oil Consumption by Year") +
+  xlab("Oil Per Capita")
 ```
 
 Burke
