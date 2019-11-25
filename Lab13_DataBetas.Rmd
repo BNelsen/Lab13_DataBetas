@@ -24,7 +24,7 @@ library(gapminder)
 library(purrr)
 ```
 
-Drew 
+***Drew***
 
 Do countries with higher life expectancy use more or less oil per capita than countries with a lower life expectancy?
 
@@ -35,6 +35,51 @@ Alternative: There is a difference in oil consumption per capita based on a coun
 My test statistic is the difference in sample means of consumption per capita between two countries, one with higher life expectancy and one with lower. My higher life expectancy countries are Japan (82.603), Switzerland (81.701), and Canada (80.653). My lower expectancy countries are Trinidad and Tobago (69.819), South Africa (49.339), and Pakistan (65.483).
 
 In two of the histogram results (Switzerland vs. South Africa and Canada vs. Pakistan) the real difference in sample means is in the 99th percentile of results. Therefore, I can reject the null hypothesis and can conclude that in countries with a higher life expectancy, they consume more oil per capita than in countries with lower life expectancy.
+
+```{r}
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # all_values (num): all data values
+  # n_A (int): Size of group A
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  perm_mean_diffs <- numeric(perms)
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly separate vector "values" into disjoint 
+    # groups of size "nA" and "nB" respectively
+    rand_vector <- sample(all_values)
+    group_a <- rand_vector[1:n_A]
+    group_b <- rand_vector[(n_A+1):length(all_values)]
+    
+    # Step 3:
+    # Compute the sample means for the two groups from 
+    # step 2
+    mean_a <- mean(group_a)
+    mean_b <- mean(group_b)
+    
+    # Step 4: 
+    # Compute the difference in sample means, store the
+    # value in the vector from step 1
+    diff_means <- mean_a - mean_b
+    perm_mean_diffs[i] <- diff_means
+    
+  }
+  
+  # Step 5:
+  # Return the permuted mean differences vector
+  return(perm_mean_diffs)
+  
+}
+```
 
 ```{r}
 oilPerCap <- read.csv("oil_consumption_per_cap.csv")
@@ -118,7 +163,7 @@ ggplot() + geom_histogram(aes(countryAverages)) +
   xlab("Oil Per Capita")
 ```
 
-Burke
+***Burke***
 
 How have northern european countries changed regarding generation of hydro power from 1960 to 2010 (In a 50 year period), and how does this change compare to changes in hydro power generation for countries of the United Kingdom and Ireland?
 
@@ -154,7 +199,7 @@ for(i in seq_along(vec_fifty)){
 #Permutation Test for means to reject or prove null hypothesis.
 ```
 
-David
+***David***
 
 How has employment rate changed from 1991 to 2015 for Asian countries? Answering this question can give us insight as to how employment has changed between generations. For this study, I will be analyzing the employment rate of Japan.
 
@@ -226,7 +271,7 @@ ggplot() + geom_histogram(aes(new.df), bins = 50)  +
 
 ```
 
-Brandon 
+***Brandon***
 
 How has total energy producton changed in South American countires from 1971 to 2008? This question is important because South America has been a greatly developing and changing continent since the 1970s and it can give us an idea about how South American countries will continue to develop. In this exploration I will be analyzing the total energy production in Chile.
 
@@ -262,7 +307,7 @@ ggplot()+
   xlab("2008 Production - 1971 Production")
 ```
 
-Tanner
+***Tanner***
 
 How have CO2 emissions changed from 1952 to 2014 for the European Union and the United States? This question is important because we would like to see how the Western World has responded to the growing concern of climate change. Were they still increasing emissions in the near past, or have they been able to lower their emissions in response?
 
